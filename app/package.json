@@ -1,0 +1,24 @@
+{
+  "name": "app",
+  "version": "1.0.0",
+  "description": "son, koajs",
+  "main": "app.js",
+  "scripts": {
+    "build": "babel app.js"
+  },
+  "keywords": [
+    "koa",
+    "son"
+  ],
+  "author": "Maycon Donizete",
+  "license": "ISC",
+  "devDependencies": {
+    "babel-cli": "^6.23.0",
+    "babel-plugin-transform-async-to-generator": "^6.22.0",
+    "babel-plugin-transform-es2015-modules-commonjs": "^6.23.0"
+  },
+  "dependencies": {
+    "koa": "^1.2.5",
+    "koa-router": "^5.4.0"
+  }
+}
