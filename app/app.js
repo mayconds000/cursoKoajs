@@ -15,8 +15,11 @@ koa.use(function *(next) {
 })
 
 router
-  .get('/', function *() {
-    this.body = 'Hello from here'
+  .get('/:name', function *() {
+    // console.log(this.request) //ctxt koa
+    console.log(this.req) // ctxt node
+    console.log(this.params) //ctxt koa
+    this.body = `Hello ${this.params.name}`
   })
   .post('main', '/hello', function *(next) {
     this.body = 'This is my main router'
