@@ -1,13 +1,16 @@
 import Koa from 'koa'
 import Chalk from 'chalk'
 import Router from 'koa-router'
-import Body from 'koa-body'
+import Body from 'koa-body-parser'
+import Override from 'koa-override'
 import Render from 'koa-swig'
 import Static from 'koa-static'
+import db from './models/index'
+import Person from './models/person'
 import path from 'path'
 const koa  = new Koa()
 const router = new Router({
-  prefix: '/hello'
+  prefix: '/people'
 })
 
 koa.context.render = Render({
@@ -16,6 +19,9 @@ koa.context.render = Render({
   cache: 'memory',
   ext: 'html'
 })
+
+koa.use(Body())
+koa.use(Override())
 
 koa.use(Static(path.join(__dirname, 'public')))
 
@@ -27,28 +33,26 @@ koa.use(function *(next) {
 })
 
 router
-  .get('/:name', function *() {
+  .get('/', function *() {
+    let results = yield Person.find({})
     yield this.render('index', {
-      name: this.params.name
+      people: results
     })
+})
+  .get('/new', function *() {
+    yield this.render('new')
+})
+  .post('/', function *() {
+    let person = new Person(this.request.body)
+    yield person.save()
+
+    this.redirect('/people')
   })
-  // .get('/:name', function *() {
-  //   // console.log(this.request) //ctxt koa
-  //   // console.log(this.req) // ctxt node
-    
-  //   console.log(this.params) //ctxt koa
-  //   this.body = `Hello ${this.params.name}`
-  //   //Observe que o response tem que vir apos ter formado alguma respota com o this.body
-  //   console.log(this.response) // ctxt koa
-  // })
-  .post('main', '/hello', function *(next) {
-    this.body = 'This is my main router'
-    yield next
-  }, function *(next) {
-    console.log('my other function')
-  })
-  .put('main_put', '/put', function *() {
-    this.body = 'this is my put router'
+  .del('/:id', function *() {
+    yield Person.remove({
+      _id: this.params.id
+    })
+    this.redirect('/people')
   })
 
 koa.use(router.routes())
